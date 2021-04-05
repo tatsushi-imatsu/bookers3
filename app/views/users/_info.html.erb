@@ -9,37 +9,36 @@
 	  <th><%= user.introduction %></th>
   </tr>
   <tr>
-   <% if user.following.favorited_by?(current_user) %>
-    <p>
-      <%= link_to book_favorites_path(user), method: :delete do %>
-        follows <%= user.following.favorites.count %>
-      <% end %>
-    </p>
-    <% else %>
-    <p>
-      <%= link_to book_favorites_path(user), method: :post do %>
-        follows <%= user.following.favorites.count %>
-      <% end %>
-    </p>
-  <% end %>
+    <th>follows</th>
+    <th><%= link_to followings_user_path(user.id) do %><%= user.followings.count %><% end %></th>
   </tr>
   <tr>
-    <% if user.followers.favorited_by?(current_user) %>
-    <p>
-      <%= link_to book_favorites_path(user), method: :delete do %>
-        followers <%= user.followers.favorites.count %>
-      <% end %>
-    </p>
-    <% else %>
-    <p>
-      <%= link_to book_favorites_path(user), method: :post do %>
-        followers <%= user.followers.favorites.count %>
-      <% end %>
-    </p>
-  <% end %>
+    <th>followers</th>
+    <th><%= link_to followers_user_path(user.id) do %><%=user.followers.count %><% end %></th>
   </tr>
-</table>
 
-<div class='row'>
-  <%= link_to '',edit_user_path(user),class: "btn btn-outline-secondary btn-block fas fa-user-cog edit_user_#{user.id}" %>
-</div>
+ <tr>
+   <th><% if user == current_user %>
+         <div class='row'>
+          <%= link_to '',edit_user_path(user),class: "btn btn-outline-secondary btn-block fas fa-user-cog edit_user_#{user.id}" %>
+         </div>
+        <div>
+        <% else %>
+     <% if current_user.following?(user) %>
+
+       <%= form_with model:@relationship, url:relationships_path, method: :delete, local: true do |f| %>
+        <%= f.hidden_field :followed_id, value: user.id %>
+        <%= f.submit "フォロー外す" %>
+       <% end %>
+     <% else %>
+
+       <%= form_with model:@set_relationship, url:relationships_path, local: true do |f| %>
+        <%= f.hidden_field :followed_id, value: user.id %>
+        <%= f.submit "フォローする" %>
+       <% end %>
+       <% end %>
+        </div>
+     <% end %>
+  </th>
+ </tr>
+</table>
