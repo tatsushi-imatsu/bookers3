@@ -6,17 +6,13 @@ Rails.application.routes.draw do
   resources :books, only: [:index, :show, :create, :edit, :update, :destroy] do
     resource :favorites, only: [:create, :destroy]
     resources :post_comments, only: [:create, :destroy]
-    # resources :users do
-    #   member do
-    #     get :followings, :followers
-    #   end
-    # end
-
-
  end
   resource :relationships, only: [:create, :destroy, :show]
   resources :users do
     get :followings, on: :member
     get :followers, on: :member
   end
+  
+  get "search" => "searches#search"
+  
 end
