@@ -18,19 +18,9 @@
           <td><%= link_to @book.title, book_path(@book) %></td>
           <td><%= @book.body %></td>
           <td>
-            <% if @book.favorited_by?(current_user) %>
-            <p>
-            <%= link_to book_favorites_path(@book), method: :delete do %>
-            ♥<%= @book.favorites.count %> いいね
-             <% end %>
-            </p>
-            <% else %>
-           <p>
-           <%= link_to book_favorites_path(@book), method: :post do %>
-           ♡<%= @book.favorites.count %> いいね
-           <% end %>
-          </p>
-         <% end %>
+             <div id="favorite-btn_<%= @book.id %>">
+             <%= render partial: 'favorites/favorite', locals: { book: @book} %>
+            </div>
           </td>
           <td>
             <p>コメント数：<%= @book.post_comments.count %></p>
@@ -41,17 +31,10 @@
           <% end %>
         </tr>
       </table>
-       <% @book.post_comments.each do |post_comment| %>
-        <p><%= attachment_image_tag(@book.user, :profile_image, :fill, 100, 100, fallback: "no-image-icon.jpg") %></p>
-        <%= post_comment.user.name %>
-        <%= post_comment.created_at.strftime('%Y/%m/%d') %><%= post_comment.comment %>
-        <% if post_comment.user == current_user %>
-        <div class="comment-delete">
-       <%= link_to "削除", book_post_comment_path(post_comment.book, post_comment), method: :delete %>
-        </div>
-       <% end %>
-       <% end %>
-       <%= form_with(model:[@book, @post_comment], local: true) do |f| %>
+      <div id="comment">
+       <%= render 'post_comments/comment', book: @book %>
+      </div>
+       <%= form_with(model:[@book, @post_comment], remote:true) do |f| %>
        <%= f.text_area :comment %>
        <br><%= f.submit "送信" %>
       <% end %>
